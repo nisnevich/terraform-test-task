@@ -1,0 +1,42 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+  pre_build:
+    commands:
+      - echo "Entered the pre_build phase..."
+      - echo "Logging in to Amazon ECR..."
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - services=('movies-service'
+          'cinema-catalog-service'
+          'booking-service'
+          'payment-service'
+          'notification-service'
+          'api-gateway'
+        )
+  build:
+    commands:
+      - echo "Entered the build phase..."
+      - for ((i = 0; i < ${#services[@]}; ++i)); do
+          tag_name="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME-${services[$i]}:$ENV"
+          echo "Building the Docker image $tag_name..."
+          cd ${services[$i]}
+          docker rm -f $tag_name
+          docker rmi $tag_name
+          docker image prune
+          docker volume prune
+          docker build -t $tag_name .
+          cd ..
+        done
+  post_build:
+    commands:
+      - echo "Entered the post_build phase..."
+      - for ((i = 0; i < ${#services[@]}; ++i)); do
+          tag_name="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME-${services[$i]}"
+          echo "Pushing the Docker image $tag_name to ECR..."
+          cd ${services[$i]}
+          docker push $tag_name
+          cd ..
+        done
