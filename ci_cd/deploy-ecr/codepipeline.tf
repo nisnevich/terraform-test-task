@@ -1,8 +1,27 @@
+module "codepipeline_iam_role" {
+  source = "dod-iac/codepipeline-iam-role/aws"
+
+  name       = "app-cinema-microservice-codepipeline-iam-role-${var.env}"
+  codebuild_projects_start = ["*"]
+  codecommit_repos_watch   = ["*"]
+  s3_buckets_artifacts     = ["*"]
+  tags       = {
+    Application = "cinema-microservice"
+    Environment = var.env
+    Automation  = "Terraform"
+  }
+}
+
 resource "aws_codepipeline" "cinema_microservice_pipeline" {
   name     = "cinema_microservice_pipeline"
-  role_arn = data.aws_iam_role.pipeline_role.arn
+  role_arn = module.codepipeline_iam_role.arn
   tags     = {
     Environment = var.env
+  }
+
+  artifact_store {
+    location = var.artifacts_bucket_name
+    type     = "S3"
   }
 
   stage {
