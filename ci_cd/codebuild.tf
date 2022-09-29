@@ -1,18 +1,18 @@
 module "codebuild_iam_role" {
   source = "dod-iac/codebuild-iam-role/aws"
 
-  name       = "app-cinema-microservice-codebuild-iam-role-eks-${var.env}"
+  name       = "app-cinema-microservice-codebuild-iam-role-${var.env}"
   subnet_ids = ["*"]
   vpc_ids    = ["*"]
   tags       = {
-    Application = "cinema-microservice"
+    Application = "cinema-microservice-"
     Environment = var.env
     Automation  = "Terraform"
   }
 }
 
 data "template_file" "buildspec" {
-  template = "${file("buildspec.yml")}"
+  template = file("${path.module}/buildspec.yml")
   vars = {
     env          = var.env
   }

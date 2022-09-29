@@ -8,6 +8,7 @@ resource "aws_s3_bucket" "cinema-microservices-bucket" {
 }
 
 resource "aws_s3_bucket_acl" "cinema-microservices-bucket-acl" {
-  bucket = aws_s3_bucket.cinema_microservices_bucket.id
+  bucket = aws_s3_bucket.cinema-microservices-bucket.id
   acl    = "private"
 }
+

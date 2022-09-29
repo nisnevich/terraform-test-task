@@ -28,5 +28,9 @@ variable "docdb_instance_class" {
   default     = "db.r4.large"
 }
 
-variable "docdb_password" {}
+variable "docdb_password" {
+  type        = string
+  description = "Password to connect to DocumentDB."
+  default     = "test"
+}
 

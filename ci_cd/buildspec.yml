@@ -4,6 +4,13 @@ phases:
   install:
     runtime-versions:
       nodejs: latest
+    commands:
+      - echo Installing Kubernetes dependencies...
+      - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/kubectl   
+      - chmod +x ./kubectl
+      - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+      - echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+      - source ~/.bashrc
   pre_build:
     commands:
       - echo "Entered the pre_build phase..."
@@ -16,6 +23,8 @@ phases:
           'notification-service'
           'api-gateway'
         )
+      - echo Logging in to Amazon EKS...
+      - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $AWS_CLUSTER_NAME
   build:
     commands:
       - echo "Entered the build phase..."
@@ -39,4 +48,7 @@ phases:
           cd ${services[$i]}
           docker push $tag_name
           cd ..
+          # kubectl apply -f deployment.yaml
         done
+
+

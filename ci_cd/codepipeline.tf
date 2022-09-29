@@ -19,6 +19,8 @@ resource "aws_codepipeline" "cinema_microservice_pipeline" {
     Environment = var.env
   }
 
+  depends_on = [aws_s3_bucket.cinema-microservices-bucket]
+
   artifact_store {
     location = var.artifacts_bucket_name
     type     = "S3"
@@ -34,6 +36,7 @@ resource "aws_codepipeline" "cinema_microservice_pipeline" {
         "Owner"                = var.github_repository_owner
         "PollForSourceChanges" = "false"
         "Repo"                 = var.github_repository_name
+        "OAuthToken"           = ""
       }
       input_artifacts = []
       name            = "Source"

@@ -33,28 +33,11 @@ provider "aws" {
   region  = var.aws_region
 }
 
-resource "aws_instance" "app_server" {
-  ami           = var.image_id
-  instance_type = "t2.micro"
-
-  tags = {
-    Name = var.project_name
-  }
-}
-
-module "eswap-ecr" {
+module "ecr" {
   source = "./ecr"
 }
 
-module "s3" {
-  source = "./ci_cd/s3-bucket"
-}
-
-module "deploy-ecr" {
-  source = "./ci_cd/deploy-ecr"
-}
-
-module "deploy-eks" {
-  source = "./ci_cd/deploy-eks"
+module "ci_cd" {
+  source = "./ci_cd"
 }
 

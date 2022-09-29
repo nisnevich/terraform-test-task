@@ -37,5 +37,7 @@ variable "aws_account_id" {
 
 variable "artifacts_bucket_name" {
   description = "S3 Bucket for storing artifacts"
-  default     = "artifacts-bucket"
+  default     = "cinema-microservices-bucket"
 }
+
+
