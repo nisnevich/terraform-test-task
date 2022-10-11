@@ -28,10 +28,11 @@ phases:
   build:
     commands:
       - echo "Entered the build phase..."
-      - for ((i = 0; i < ${#services[@]}; ++i)); do
-          tag_name="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME-${services[$i]}:$ENV"
+      - for 
+      - for service in "${services[@]}" do
+          tag_name="$AWS_ACCOUNT_ID\.dkr\.ecr\.$AWS_DEFAULT_REGION\.amazonaws\.com/$IMAGE_REPO_NAME-$service:$ENV"
           echo "Building the Docker image $tag_name..."
-          cd ${services[$i]}
+          cd $service
           docker rm -f $tag_name
           docker rmi $tag_name
           docker image prune
@@ -42,10 +43,9 @@ phases:
   post_build:
     commands:
       - echo "Entered the post_build phase..."
-      - for ((i = 0; i < ${#services[@]}; ++i)); do
-          tag_name="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME-${services[$i]}"
+          tag_name="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME-$service"
           echo "Pushing the Docker image $tag_name to ECR..."
-          cd ${services[$i]}
+          cd $service
           docker push $tag_name
           cd ..
           # kubectl apply -f deployment.yaml

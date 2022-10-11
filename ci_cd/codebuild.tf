@@ -11,12 +11,12 @@ module "codebuild_iam_role" {
   }
 }
 
-data "template_file" "buildspec" {
-  template = file("${path.module}/buildspec.yml")
-  vars = {
-    env          = var.env
-  }
-}
+# data "template_file" "buildspec" {
+#   template = "${file("${path.module}/buildspec.yml")}"
+#   vars = {
+#     env          = var.env
+#   }
+# }
 
 resource "aws_codebuild_project" "static_web_build" {
   badge_enabled  = false
@@ -56,7 +56,10 @@ resource "aws_codebuild_project" "static_web_build" {
   }
 
   source {
-    buildspec           = data.template_file.buildspec.rendered
+    # Commented because template rendering shows weird errors (that the character isn't used within
+    # the language)
+    # buildspec           = data.template_file.buildspec.rendered
+    buildspec           = "./buildspec.yml"
     git_clone_depth     = 0
     insecure_ssl        = false
     report_build_status = false

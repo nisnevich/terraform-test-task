@@ -44,7 +44,7 @@ resource "aws_codepipeline" "cinema_microservice_pipeline" {
         "SourceArtifact",
       ]
       owner     = "ThirdParty"
-      provider  = "GitHub"
+      provider  = "GitHub (Version 2)"
       run_order = 1
       version   = "1"
     }
